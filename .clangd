@@ -1,3 +1,4 @@
 CompileFlags:
   Add:
+    - "-I/home/user/projs/library_management_system/Library-manage-system/backend/include"
     - "-I/home/kiz/CodeProjects/Library-manage-system/backend/include"

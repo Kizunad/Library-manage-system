@@ -10,7 +10,7 @@ std::unique_ptr<User> User::findById(int id){
     try {
         pqxx::work txn(*conn);
         auto result = txn.exec_params(
-                "SELECT id, username, email, password_hash, role",
+                "SELECT id, username, email, password_hash, role"
                 "FROM users WHERE id=$1",
                 id
         );
@@ -41,7 +41,7 @@ std::unique_ptr<User> User::findByUsername(const std::string& username){
     try {
         pqxx::work txn(*conn);
         auto result = txn.exec_params(
-                "SELECT id, username, email, password_hash, role",
+                "SELECT id, username, email, password_hash, role"
                 "FROM users WHERE username=$1",
                 username
         );
@@ -68,7 +68,39 @@ std::unique_ptr<User> User::findByUsername(const std::string& username){
         return nullptr;
     }
 }
-std::vector<std::unique_ptr<User>> User::findAll(){}
+std::vector<std::unique_ptr<User>> User::findAll(){
+    auto conn = DatabasePool::getInstance().getConnection();
+    try {
+        pqxx::work txn(*conn);
+        auto result = txn.exec_params(
+                "SELECT id, username, email, password_hash, role",
+                "FROM users "
+                username
+        );
+
+        if (result.empty()) {
+            return nullptr;
+        }
+
+        auto user = User::create()
+             .setUsername(result[0]["username"].as<std::string>())
+             .setEmail(result[0]["email"].as<std::string>())
+             .setPasswordHash(result[0]["password_hash"].as<std::string>())
+             .setRole(result[0]["role"].as<std::string>())
+             .build();
+
+        user->id_= result[0]["id"].as<int>();
+
+        txn.commit();
+
+        return user;
+
+    } catch (const std::exception& e) {
+        //TODO: Record err log
+        return nullptr;
+    }
+
+}
 
 bool save();
 bool update();

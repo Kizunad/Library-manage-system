@@ -75,7 +75,7 @@ std::vector<std::unique_ptr<User>> User::findAll(){
     try {
         pqxx::work txn(*conn);
         auto result = txn.exec_params(
-                "SELECT id, username, email, password_hash, role",
+                "SELECT id, username, email, password_hash, role"
                 "FROM users "
         );
 

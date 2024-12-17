@@ -1,11 +1,13 @@
 // src/models/user.cpp
 
 #include "models/user.hpp"
+#include "models/book.hpp"
 #include "utils/database_pool.hpp"
 #include <exception>
 #include <memory>
 #include <string>
 #include <vector>
+#include <iostream>
 
 std::unique_ptr<User> User::findById(int id){
     auto conn = DatabasePool::getInstance().getConnection();
@@ -60,7 +62,6 @@ std::unique_ptr<User> User::findByUsername(const std::string& username){
              .build();
 
         user->id_= result[0]["id"].as<int>();
-
         txn.commit();
 
         return user;
@@ -70,6 +71,22 @@ std::unique_ptr<User> User::findByUsername(const std::string& username){
         return nullptr;
     }
 }
+[[nodiscard]] int Book::count(){
+    auto conn = DatabasePool::getInstance().getConnection();
+
+    try {
+        pqxx::work txn(*conn);
+
+        auto results = txn.exec1("SELECT COUNT(*) FROM books");
+
+        return results[0].as<int>();
+    } catch (const std::exception& e) {
+        std::cerr << "Error in Book::count(): " << e.what() << std::endl;
+        return 0;
+    }
+}
+
+
 std::vector<std::unique_ptr<User>> User::findAll(){
     auto conn = DatabasePool::getInstance().getConnection();
     try {
@@ -152,7 +169,7 @@ bool User::update(){
 
     try {
         pqxx::work txn(*conn);
-        
+
         auto check = txn.exec_params(
             "SELECT id FROM users WHERE (username = $1 OR email = $2) AND id != $3",
             username_, email_, id_
@@ -168,12 +185,12 @@ bool User::update(){
             "WHERE id = $5",
             username_, email_, password_hash_, role_, id_
         );
-        
+
         txn.commit();
         return result.affected_rows() > 0;
    } catch (const std::exception& e) {
         //TODO
-        return false; 
+        return false;
     }
 }
 bool User::remove(){
@@ -203,7 +220,7 @@ bool User::remove(){
 
         txn.commit();
         return result.affected_rows() > 0;
-        
+
     } catch (const std::exception& e) {
         return false;
     }

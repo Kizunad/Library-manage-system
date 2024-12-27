@@ -7,6 +7,29 @@
 #include <chrono>
 #include <pqxx/pqxx>
 
+/*
+基础CRUD操作：
+
+findById：根据ID查找借阅记录
+save：保存新的借阅记录
+update：更新借阅记录
+findByUserId：查找用户的所有借阅记录
+findByBookId：查找图书的所有借阅记录
+
+
+业务相关操作：
+
+return_book：归还图书
+renew：续借功能
+isOverdue：检查是否逾期
+findOverdue：查找所有逾期记录
+
+
+统计功能：
+
+countActiveByUserId：统计用户当前借阅数量
+countOverdueByUserId：统计用户逾期数量
+*/
 class BorrowingRecord {
 public:
     // 借阅状态枚举

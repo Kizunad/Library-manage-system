@@ -16,7 +16,7 @@ public:
     BorrowingService(const BorrowingService&) = delete;
     BorrowingService& operator=(const BorrowingService&) = delete;
 
-    [[nodiscard]] bool borrowBook(int user_id, int book_id,
+    [[nodiscard]] std::unique_ptr<BorrowingRecord> borrowBook(int user_id, int book_id,
      const std::string& borrow_date = "", const std::string& return_date = "");
     [[nodiscard]] bool returnBook(int user_id, int book_id,
     const std::string& return_date = "");

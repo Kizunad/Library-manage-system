@@ -6,6 +6,9 @@
 #include "models/borrowing_record.hpp"
 #include "models/book.hpp"
 #include "models/user.hpp"
+
+#define MAX_BORROW_TIME 14
+#define MAX_BORROW_LIMIT 5
 class BorrowingService{
 public:
     static BorrowingService& getInstance(){
@@ -23,17 +26,17 @@ public:
 
     [[nodiscard]] bool renewBook(int user_id, int book_id);
 
-    [[nodiscard]] std::vector<std::unique_ptr<BorrowingRecord>>
+    [[nodiscard]]std::vector<std::unique_ptr<BorrowingRecord>>
     getUserBorrowings(int user_id, bool include_returned = false);
 
-    [[nodiscard]] std::vector<std::unique_ptr<BorrowingRecord>>
+    [[nodiscard]]std::vector<std::unique_ptr<BorrowingRecord>>
     getBookBorrowings(int book_id, bool include_returned = false);
 
     [[nodiscard]] std::vector<std::unique_ptr<BorrowingRecord>>
     getOverdueBooks();
 
-    [[nodiscard]] int getUserCurrentBorrowCount(int user_id);
-    [[nodiscard]] int getUserOverdueCount(int user_id);
+    [[nodiscard]] int getUserCurrentBorrowCount(int user_id) const;
+    [[nodiscard]] int getUserOverdueCount(int user_id) const;
 
 private:
     BorrowingService() = default;
